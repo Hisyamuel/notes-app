@@ -1,0 +1,53 @@
+:root {
+  --primary-color: navy;
+  --secondary-color: #03dac6;
+  --background-color: #0d1b2a;
+  --surface-color: navy;
+  --text-color: yellow;
+  --on-primary: yellow;
+  --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  --border-radius: 8px;
+  --third-color: green;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: ease 1s;
+}
+
+main {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.form-section {
+  max-width: 600px;
+  margin: 0 auto 32px auto;
+}
+
+#notes-section h2 {
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: 10px;
+  margin-top: 40px;
+}
+
+/* Loading Spinner */
+.spinner {
+  border: 8px solid rgba(255, 255, 255, 0.2);
+  border-left-color: var(--on-primary);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin: 20px auto;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
