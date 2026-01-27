@@ -35,6 +35,16 @@ main {
   margin-top: 40px;
 }
 
+footer {
+  font-weight: bold;
+  text-align: center;
+  padding: 20px;
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  width: auto;
+  margin: 0 auto
+}
+
 /* Loading Spinner */
 .spinner {
   border: 8px solid rgba(255, 255, 255, 0.2);
