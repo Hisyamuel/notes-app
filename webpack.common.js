@@ -21,12 +21,17 @@ module.exports = {
                     loader: 'babel-loader',
                 },
             },
+            {
+                test: /\.(png|svg|jpg|jpeg|gif)$/i,
+                type: 'assets/resource',
+            },
         ],
     },
     plugins: [
         new HtmlWebpackPlugin({
             template: 'index.html',
             filename: 'index.html',
+            favicon: './src/assets/notes.png',
         }),
     ],
 };
