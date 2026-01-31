@@ -100,6 +100,11 @@ class NoteForm extends HTMLElement {
               box-shadow: var(--box-shadow); 
             }
 
+            h2 {
+              text-align: center;
+              margin-bottom: 8px;
+            }
+
             .form-group { 
               margin-bottom: 16px; 
             }
