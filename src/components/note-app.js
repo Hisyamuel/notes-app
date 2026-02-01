@@ -52,7 +52,7 @@ class NoteBar extends HTMLElement {
     this.attachShadow({ mode: 'open' });
   }
   connectedCallback() {
-    const title = this.getAttribute('note-title') || 'Notes App';
+    const title = this.getAttribute('note-title') || 'Dicatat';
     this.render(title);
   }
   render(title) {
@@ -224,7 +224,10 @@ class NoteForm extends HTMLElement {
     form.addEventListener('submit', (event) => {
       event.preventDefault();
       this.dispatchEvent(new CustomEvent('note-added', {
-        detail: { title: titleInput.value, body: bodyInput.value },
+        detail: { 
+          title: titleInput.value, 
+          body: bodyInput.value 
+        },
         bubbles: true, composed: true
       }));
       form.reset();
@@ -240,6 +243,7 @@ class NoteItem extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
+    this._isEditing = false;
   }
   set note(note) {
     this._note = note;
@@ -247,21 +251,45 @@ class NoteItem extends HTMLElement {
   }
   connectedCallback() {
     this.shadowRoot.querySelector('.delete-btn').addEventListener('click', () => {
-      this.dispatchEvent(new CustomEvent('note-deleted', { detail: { id: this._note.id }, bubbles: true, composed: true }));
+      this.dispatchEvent(new CustomEvent('note-deleted', { 
+        detail: { 
+          id: this._note.id 
+        }, 
+        bubbles: true, 
+        composed: true 
+      }));
     });
 
     this.shadowRoot.querySelector('.archive-btn').addEventListener('click', () => {
-      this.dispatchEvent(new CustomEvent('note-archived', { detail: { id: this._note.id, archived: this._note.archived }, bubbles: true, composed: true }));
+      this.dispatchEvent(new CustomEvent('note-archived', { 
+        detail: { 
+          id: this._note.id, 
+          archived: this._note.archived 
+        }, 
+        bubbles: true, 
+        composed: true 
+      }));
     });
+
+    this.shadowRoot.querySelector('.edit-btn').addEventListener('click', () => {
+      this.toggleEditMode();
+    });
+  }
+  toggleEditMode() {
+    this._isEditing = !this._isEditing;
+    this.render();
   }
   render() {
     const { title, body, createdAt, archived } = this._note;
     const formattedDate = new Date(createdAt).toLocaleDateString('id-ID', {
-      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric'
     });
 
-    // Memastikan event listener ditambahkan setelah elemen dirender
-    this.shadowRoot.innerHTML = `
+    if (this._isEditing) {
+      this.shadowRoot.innerHTML = `
           <style>
             .note-card { 
               background-color: var(--surface-color); 
@@ -273,33 +301,26 @@ class NoteItem extends HTMLElement {
               height: 100%; 
               box-sizing: border-box; 
             }
-
-            .note-title { 
-              font-size: 1.5rem; 
-              font-weight: 700; 
-              margin: 0 0 8px 0; 
-            }
-
-            .note-date { 
-              font-size: 0.8rem; 
-              color: white; 
-              margin-bottom: 16px; 
-            }
-
-            .note-body { 
+            .note-title-input, .note-body-input { 
+              width: 100%; 
+              padding: 12px; 
+              border: 1px solid #ccc; 
+              border-radius: var(--border-radius); 
               font-size: 1rem; 
-              line-height: 1.5; 
-              flex-grow: 1; 
-              white-space: pre-wrap; 
+              font-family: inherit; 
+              box-sizing: border-box; 
+              margin-bottom: 10px; 
             }
-
+            .note-body-input { 
+              min-height: 120px; 
+              resize: vertical; 
+            }
             .note-actions { 
               margin-top: 16px; 
               display: flex; 
               gap: 10px; 
               justify-content: flex-end; 
             }
-
             .note-actions button { 
               padding: 8px 16px; 
               border: none; 
@@ -308,19 +329,94 @@ class NoteItem extends HTMLElement {
               font-weight: 500; 
               transition: transform 0.2s ease, box-shadow 0.2s ease; 
             }
-
             .note-actions button:hover { 
               transform: translateY(-2px); 
               box-shadow: 0 2px 4px rgba(0,0,0,0.2); 
             }
-
+            .save-btn { 
+              background-color: blue; 
+              color: var(--on-primary); 
+            }
+          </style>
+          <div class="note-card">
+            <input type="text" class="note-title-input" value="${title}">
+            <textarea class="note-body-input">${body}</textarea>
+            <div class="note-actions">
+              <button class="save-btn">Save</button>
+            </div>
+          </div>
+      `;
+      this.shadowRoot.querySelector('.save-btn').addEventListener('click', () => {
+        const newTitle = this.shadowRoot.querySelector('.note-title-input').value;
+        const newBody = this.shadowRoot.querySelector('.note-body-input').value;
+        this.dispatchEvent(new CustomEvent('note-edited', {
+          detail: { 
+            id: this._note.id, 
+            title: newTitle, 
+            body: newBody 
+          },
+          bubbles: true,
+          composed: true
+        }));
+        this.toggleEditMode();
+      });
+    } else {
+      this.shadowRoot.innerHTML = `
+          <style>
+            .note-card { 
+              background-color: var(--surface-color); 
+              border-radius: var(--border-radius); 
+              padding: 20px; 
+              box-shadow: var(--box-shadow); 
+              display: flex; 
+              flex-direction: column; 
+              height: 100%; 
+              box-sizing: border-box; 
+            }
+            .note-title { 
+              font-size: 1.5rem; 
+              font-weight: 700; 
+              margin: 0 0 8px 0; 
+            }
+            .note-date { 
+              font-size: 0.8rem; 
+              color: white; 
+              margin-bottom: 16px; 
+            }
+            .note-body { 
+              font-size: 1rem; 
+              line-height: 1.5; 
+              flex-grow: 1; 
+              white-space: pre-wrap; 
+            }
+            .note-actions { 
+              margin-top: 16px; 
+              display: flex; 
+              gap: 10px; 
+              justify-content: flex-end; 
+            }
+            .note-actions button { 
+              padding: 8px 16px; 
+              border: none; 
+              border-radius: var(--border-radius); 
+              cursor: pointer; 
+              font-weight: 500; 
+              transition: transform 0.2s ease, box-shadow 0.2s ease; 
+            }
+            .note-actions button:hover { 
+              transform: translateY(-2px); 
+              box-shadow: 0 2px 4px rgba(0,0,0,0.2); 
+            }
             .archive-btn { 
               background-color: var(--third-color); 
               color: var(--on-primary); 
             }
-
             .delete-btn { 
               background-color: #ef4444; 
+              color: white; 
+            }
+            .edit-btn { 
+              background-color: #f59e0b; 
               color: white; 
             }
           </style>
@@ -331,10 +427,12 @@ class NoteItem extends HTMLElement {
             <p class="note-body">${body}</p>
             <div class="note-actions">
                 <button class="archive-btn">${archived ? 'Unarchive' : 'Archive'}</button>
+                <button class="edit-btn">Edit</button>
                 <button class="delete-btn">Delete</button>
             </div>
           </div>
         `;
+    }
   }
 }
 customElements.define('note-item', NoteItem);
@@ -441,6 +539,21 @@ document.addEventListener('DOMContentLoaded', () => {
         await api.archiveNote(id);
         Swal.fire('Diarsipkan!', 'Catatan telah diarsipkan.', 'success');
       }
+      await loadNotes();
+    } catch (error) {
+      Swal.fire('Error!', `Gagal memperbarui catatan: ${error.message}`, 'error');
+    } finally {
+      hideLoading();
+    }
+  });
+
+  document.addEventListener('note-edited', async (event) => {
+    showLoading();
+    const { id, title, body } = event.detail;
+    try {
+      await api.deleteNote(id);
+      await api.createNote({ title, body });
+      Swal.fire('Sukses!', 'Catatan berhasil diperbarui!', 'success');
       await loadNotes();
     } catch (error) {
       Swal.fire('Error!', `Gagal memperbarui catatan: ${error.message}`, 'error');
