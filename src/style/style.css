@@ -15,7 +15,6 @@ body {
   font-family: 'Inter', sans-serif;
   background-color: var(--background-color);
   color: var(--text-color);
-  transition: ease 1s;
 }
 
 main {
@@ -27,6 +26,11 @@ main {
 .form-section {
   max-width: 600px;
   margin: 0 auto 32px auto;
+  transition: ease 1s;
+}
+
+#notes-section {
+  transition: ease 1s;
 }
 
 #notes-section h2 {
