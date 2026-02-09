@@ -26,11 +26,23 @@ main {
 .form-section {
   max-width: 600px;
   margin: 0 auto 32px auto;
-  transition: ease 1s;
 }
 
-#notes-section {
-  transition: ease 1s;
+#notes-section, .form-section {
+  animation: fadeIn 0.6s ease-out;
+  transition: 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 #notes-section h2 {
