@@ -102,7 +102,11 @@ class NoteForm extends HTMLElement {
 
             h2 {
               text-align: center;
-              margin-bottom: 8px;
+              margin-bottom: 20px;
+            }
+
+            hr {
+              background-color: var(--text-color);
             }
 
             .form-group { 
@@ -163,6 +167,7 @@ class NoteForm extends HTMLElement {
 
           <div class="form-container">
             <h2>Buat Catatan Baru</h2>
+            <hr><br>
             <form id="noteForm">
               <div class="form-group">
                 <label for="noteTitle">Judul</label>
